@@ -7,7 +7,7 @@ hero:
   text: JS-Slash-Runner
   tagline: 在SillyTavern中渲染前端界面
   image:
-    src: /public/home.png
+    src: /home.png
     alt: Project Logo
   actions:
     - theme: brand
