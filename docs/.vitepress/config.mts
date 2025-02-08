@@ -2,6 +2,7 @@ import { defineConfig, DefaultTheme } from 'vitepress'
 import { withSidebar } from 'vitepress-sidebar';
 
 const vitePressOptions = {
+  base: '/JS-Slash-Runner-Doc/',
   title: "前端助手",
   description: "A VitePress Site",
   themeConfig: {
