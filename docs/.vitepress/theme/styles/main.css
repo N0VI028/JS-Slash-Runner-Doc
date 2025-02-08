@@ -1,0 +1,19 @@
+@import "./vars.css";
+.vp-doc a {
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.vp-doc a:hover {
+  text-decoration: underline;
+}
+
+:root {
+  /* hero标题渐变色 */
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: -webkit-linear-gradient(
+    120deg,
+    var(--vp-c-brand-1),
+    var(--vp-c-brand-2)
+  );
+}
