@@ -12,7 +12,7 @@ hero:
   actions:
     - theme: brand
       text: 使用说明
-      link: /关于前端助手/安装
+      link: /关于前端助手/安装与更新
     - theme: alt
       text: 在GitHub上查看
       link: https://github.com/N0VI028/JS-Slash-Runner
