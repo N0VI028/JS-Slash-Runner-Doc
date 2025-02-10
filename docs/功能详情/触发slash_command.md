@@ -16,7 +16,7 @@ async function triggerSlash(command: string): Promise<void>
 ```
 
 **参数：**
-- `command`: 要运行的 Slash 命令.
+- `command`: 要运行的 Slash 命令
 
 ::: info 示例
 
@@ -36,13 +36,13 @@ async function triggerSlashWithResult(command: string): Promise<string | undefin
 ```
 
 **参数：**
-- `command`: 要运行的 Slash 命令.
+- `command`: 要运行的 Slash 命令
 
 **返回值：**
-- Slash 管道结果, 如果命令出错或执行了 `/abort` 则返回 `undefined`.
+- Slash 管道结果, 如果命令出错或执行了 `/abort` 则返回 `undefined`
 
 ::: info 示例
-获取当前聊天消息最后一条消息对应的 id.
+获取当前聊天消息最后一条消息对应的 id：
 ``` typescript
   const last_message_id = await triggerSlashWithResult('/pass {{lastMessageId}}');
 ```
