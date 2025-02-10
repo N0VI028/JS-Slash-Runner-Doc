@@ -1,12 +1,16 @@
-import { defineConfig, DefaultTheme } from 'vitepress'
+import { defineConfig, HeadConfig } from 'vitepress'
 import { withSidebar } from 'vitepress-sidebar';
 
 const vitePressOptions = {
   base: '/JS-Slash-Runner-Doc/',
   title: "前端助手",
-  description: "A VitePress Site",
+  description: "在SillyTavern中渲染前端界面",
+  head: [
+    ['link', { rel: 'icon', href: 'logo.ico' }],
+    ['script', { defer: '', async: '', src: 'https://cn.vercount.one/js' }]
+  ] as HeadConfig[],
   themeConfig: {
-    logo: '/logo.png',
+    logo: '/logo.ico',
     outline: {
       label: "目录",
       level: [2, 5],

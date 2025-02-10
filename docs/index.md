@@ -25,3 +25,9 @@ features:
   - title: 📢 音频播放器集成
     details: 内置音频播放器，支持从网络链接加载音频，并提供多种播放模式（如列表循环、随机播放等）
 
+---
+<DataPanel />
+
+<script setup lang="ts">
+import DataPanel from '.vitepress/theme/components/DataPanel.vue'
+</script>
