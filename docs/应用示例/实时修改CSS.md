@@ -7,7 +7,6 @@
 - 安装 VSCode，并为 VSCode 安装 live server 插件，[查看参考教程](https://sillytavern-stage-girls-dog.readthedocs.io/tool_and_experience/_vscode/index.html)
 - 用 VSCode 打开一个文件夹，在其中新建一个 test.css 文件
 - 在 VSCode 文件列表右键 test.css 文件，点击 "复制相对路径"
-
 - 在 VSCode 右下角点击 "Go Live" 来将文件夹映射到链接上，然后 "Go Live" 将会变成一串数字
 - 打开下方下载的角色卡正则中的 "脚本-实时修改CSS"，将其中 "填入你的css链接" 改为 `http://localhost:那一串数字/你复制得到的相对路径`
 
