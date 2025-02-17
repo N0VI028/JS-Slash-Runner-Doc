@@ -25,8 +25,8 @@ const vitePressOptions = {
       { icon: 'discord', link: 'https://discord.com/channels/1134557553011998840/1296494001406345318' }
     ],
     footer: {
-      message: '作者： KAKAA, 青空莉想做舞台少女的狗',
-      copyright: 'Copyright © 2025, N0VI028.'
+      message: '作者：KAKAA, 青空莉想做舞台少女的狗',
+      copyright: '© Copyright 2025, N0VI028.<br>Icons by <a href="https://igoutu.cn/">Icons8</a>',
     },
     lastUpdated: true,
     search: {
@@ -41,7 +41,10 @@ const vitePressOptions = {
       infoLabel: '信息',
       detailsLabel: '详细信息'
     },
-    lineNumbers: true
+    lineNumbers: true,
+    toc: {
+      level: [2, 3]
+    },
   }
 };
 

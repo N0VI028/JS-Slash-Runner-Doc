@@ -16,3 +16,26 @@
 .vp-doc a:hover {
   text-decoration: underline;
 }
+
+.vp-doc .table-of-contents ul {
+  padding-left: 0;
+}
+
+.vp-doc .table-of-contents li {
+  list-style-type: none;
+}
+
+.vp-doc .table-of-contents ul:first-child > li > a {
+  font-size: 1.1em;
+  font-weight: 700;
+}
+
+.vp-doc .table-of-contents a {
+  color: var(--vp-c-text-1); 
+  text-decoration: none;
+}
+
+.vp-doc .table-of-contents a:hover {
+  text-decoration: none;
+  color: var(--vp-c-text-2);  
+}

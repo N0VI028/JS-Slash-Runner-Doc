@@ -16,7 +16,7 @@
 如果觉得 VSCode 修改后的反馈还是比较慢，可以把 `脚本-实时修改CSS` 中最下面一行的 `1000` 调小
 :::
 
-<video width="100%" height="auto" controls>
-  <source src="https://cdn.discordapp.com/attachments/1333758463582404670/1333758468737470554/2025-01-28_19.15.30.mov?ex=67ab325e&is=67a9e0de&hm=b24d8ccb4b86bc89d61fb244ec2f6034d110624e31ff8c223dc6cb11f1717664&" type="video/mp4">
+<video width="100%" height="auto" controls style="margin-top: 15px;">
+  <source src="https://gitgud.io/SmilingFace/tavern_resource/-/raw/main/%E5%89%8D%E7%AB%AF%E5%8A%A9%E6%89%8B/%E5%AE%9E%E6%97%B6%E4%BF%AE%E6%94%B9css/%E8%A7%86%E9%A2%91.mov?inline=false" type="video/mp4">
   您的浏览器不支持 video 标签
 </video>
