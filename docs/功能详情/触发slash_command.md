@@ -2,7 +2,7 @@
 
 我们可以在嵌入的 iframe 中执行 SillyTavern 内部的 Slash 命令 (斜杠命令), 如 `/run`、`/echo` 等。
 
-<customTOC />
+<CustomTOC />
 
 ::: info 参考
 你可以在这些地方查看SillyTavern的全部 Slash（快速回复） 命令：

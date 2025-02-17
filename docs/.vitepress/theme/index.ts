@@ -3,7 +3,7 @@ import './styles/vars.css'
 import './styles/main.css'
 import './styles/custom.css'
 import MyButton from './components/MyButton.vue'
-import CustomTOC from './components/customTOC.vue'
+import CustomTOC from './components/CustomTOC.vue'
 import BackToTop from './components/BackToTop.vue'
 import { h } from 'vue'
 
@@ -16,7 +16,7 @@ export default {
   },
   enhanceApp({ app }: { app: any }) {
     app.component('MyButton', MyButton)
-    app.component('customTOC', CustomTOC)
+    app.component('CustomTOC', CustomTOC)
   },
 }
 
