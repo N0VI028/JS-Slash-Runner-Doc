@@ -8,6 +8,8 @@
       var(--vp-c-brand-2));
 }
 
+/* 文档标题样式 */
+
 .vp-doc a {
   text-decoration: none;
   transition: all 0.3s ease;

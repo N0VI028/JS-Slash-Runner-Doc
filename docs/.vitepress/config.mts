@@ -13,7 +13,7 @@ const vitePressOptions = {
     logo: '/logo.ico',
     outline: {
       label: "目录",
-      level: [2, 5],
+      level: [2, 3],
     },
     nav: [
       { text: '主页', link: '/' },
