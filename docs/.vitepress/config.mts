@@ -7,7 +7,6 @@ const vitePressOptions = {
   description: "在SillyTavern中渲染前端界面",
   head: [
     ['link', { rel: 'icon', href: 'logo.ico' }],
-    ['script', { defer: '', async: '', src: 'https://events.vercount.one/js' }]
   ] as HeadConfig[],
   themeConfig: {
     logo: '/logo.ico',

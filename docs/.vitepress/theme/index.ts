@@ -1,4 +1,5 @@
 import DefaultTheme from 'vitepress/theme';
+import { inBrowser } from 'vitepress/client';
 import './styles/vars.css'
 import './styles/main.css'
 import './styles/custom.css'
@@ -8,6 +9,7 @@ import CustomTOC from './components/CustomTOC.vue'
 import BackToTop from './components/BackToTop.vue'
 import DocViews from './components/DocViews.vue'
 import { h } from 'vue'
+import useVisitData from './useVisitData'
 
 export default {
   extends: DefaultTheme,
@@ -17,10 +19,15 @@ export default {
       'doc-footer-before': () => h(DocViews)
     })
   },
-  enhanceApp({ app }: { app: any }) {
+  enhanceApp({ app, router }: { app: any, router: any }) {
     app.component('MyButton', MyButton)
     app.component('CustomTOC', CustomTOC)
     app.component('DocViews', DocViews)
+    if (inBrowser) {
+      router.onAfterPageLoad = (to: string) => {
+        useVisitData()
+      }
+    }
   },
 }
 

@@ -28,7 +28,10 @@
         <ul v-if="!item.collapsed && item.children.length" class="sub-list">
           <li v-for="(h3Item, j) in item.children" :key="j" class="sub-item h3">
             <div class="h3-title" @click="toggleH3Collapse(h3Item)">
-              <a :href="h3Item.href" @click.stop.prevent="scrollToAnchor(h3Item.href)">
+              <a
+                :href="h3Item.href"
+                @click.stop.prevent="scrollToAnchor(h3Item.href)"
+              >
                 <span
                   v-if="h3Item.iconType"
                   :class="['icon', h3Item.iconType]"
@@ -41,7 +44,10 @@
                 :aria-label="h3Item.collapsed ? '展开' : '折叠'"
               />
             </div>
-            <ul v-if="h3Item.children?.length && !h3Item.collapsed" class="h4-list">
+            <ul
+              v-if="h3Item.children?.length && !h3Item.collapsed"
+              class="h4-list"
+            >
               <li
                 v-for="(h4Item, k) in h3Item.children"
                 :key="k"
@@ -75,7 +81,7 @@ export default {
   },
   methods: {
     isEnglishOnly(text) {
-      const textWithoutSpaces = text.replace(/\s+/g, '');
+      const textWithoutSpaces = text.replace(/\s+/g, "");
       return /^[A-Za-z0-9\-_.,!?()]*$/.test(textWithoutSpaces);
     },
 
@@ -94,17 +100,49 @@ export default {
       headingTags.forEach((tag, index) => {
         const level = tag.tagName.toLowerCase();
         const text = Array.from(tag.childNodes)
-          .filter(node => node.nodeType === Node.TEXT_NODE)
-          .map(node => node.textContent.trim())
-          .join('')
+          .filter((node) => node.nodeType === Node.TEXT_NODE)
+          .map((node) => node.textContent.trim())
+          .join("")
           .trim();
 
         if (level === "h3" && text.includes("示例")) {
+          lastH3 = null;
           return;
         }
 
         if (level === "h2" && !this.isEnglishOnly(text)) {
+          lastH2 = null;
+          lastH3 = null;
           return;
+        }
+
+        if (level === "h3" && !text.includes("参数") && !text.includes("返回值")) {
+          lastH3 = null;
+          return;
+        }
+
+        if (level === "h4") {
+          let currentIndex = index;
+          let currentH3 = null;
+          while (currentIndex >= 0) {
+            const currentTag = headingTags[currentIndex];
+            if (currentTag.tagName.toLowerCase() === "h3") {
+              const h3Text = Array.from(currentTag.childNodes)
+                .filter((node) => node.nodeType === Node.TEXT_NODE)
+                .map((node) => node.textContent.trim())
+                .join("")
+                .trim();
+              if (h3Text.includes("参数") || h3Text.includes("返回值")) {
+                currentH3 = currentTag;
+              }
+              break;
+            }
+            currentIndex--;
+          }
+          
+          if (!currentH3) {
+            return;
+          }
         }
 
         const item = {
@@ -117,8 +155,10 @@ export default {
 
         if (level === "h2") {
           let nextElement = tag.nextElementSibling;
-          if (nextElement && nextElement.tagName.toLowerCase() === 'p') {
-            item.description = nextElement.textContent.trim().replace(/[。.]$/, "");
+          if (nextElement && nextElement.tagName.toLowerCase() === "p") {
+            item.description = nextElement.textContent
+              .trim()
+              .replace(/[。.]$/, "");
           }
 
           lastH2 = item;
@@ -127,25 +167,31 @@ export default {
         } else if (level === "h3") {
           if (lastH2) {
             lastH3 = item;
-            if (text.includes("返回值") || text.includes("return") || text.includes("Return")) {
+            if (
+              text.includes("返回值") ||
+              text.includes("return") ||
+              text.includes("Return")
+            ) {
               let currentElement = tag.nextElementSibling;
               while (currentElement) {
-                if (currentElement.tagName.toLowerCase() === 'ul') {
+                if (currentElement.tagName.match(/^H[1-6]$/i)) {
+                  break;
+                }
+                if (currentElement.tagName.toLowerCase() === "ul") {
                   const returnItems = [];
-                  const listItems = currentElement.querySelectorAll('li');
-                  listItems.forEach(li => {
-                    const strongElement = li.querySelector('strong');
+                  const listItems = currentElement.querySelectorAll("li");
+                  listItems.forEach((li) => {
+                    const strongElement = li.querySelector("strong");
                     if (strongElement) {
                       returnItems.push({
                         text: strongElement.textContent,
-                        href: "#" + tag.id
+                        href: "#" + tag.id,
                       });
                     }
                   });
                   if (returnItems.length > 0) {
                     item.children = returnItems;
                   }
-                  break;
                 }
                 currentElement = currentElement.nextElementSibling;
               }
@@ -157,8 +203,8 @@ export default {
             if (!lastH3.children) {
               lastH3.children = [];
             }
-            if (lastH3.iconType === 'params') {
-              const codeElement = tag.querySelector('code');
+            if (lastH3.iconType === "params") {
+              const codeElement = tag.querySelector("code");
               if (codeElement) {
                 item.text = codeElement.textContent;
               }
