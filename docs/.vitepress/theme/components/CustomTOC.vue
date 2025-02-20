@@ -80,164 +80,130 @@ export default {
     this.collectHeadings();
   },
   methods: {
-    isEnglishOnly(text) {
-      const textWithoutSpaces = text.replace(/\s+/g, "");
-      return /^[A-Za-z0-9\-_.,!?()]*$/.test(textWithoutSpaces);
-    },
-
     collectHeadings() {
-      const headingTags = Array.from(
-        document.querySelector(".vp-doc")?.querySelectorAll("h2, h3, h4") || []
-      );
-      this.headings = this.buildHeadingTree(headingTags);
-    },
+      const vpDoc = document.querySelector('.VPDoc');
+      if (!vpDoc) return;
 
-    buildHeadingTree(headingTags) {
-      const result = [];
-      let lastH2 = null;
-      let lastH3 = null;
+      const h2Elements = vpDoc.querySelectorAll('h2');
+      this.headings = [];
 
-      headingTags.forEach((tag, index) => {
-        const level = tag.tagName.toLowerCase();
-        const text = Array.from(tag.childNodes)
-          .filter((node) => node.nodeType === Node.TEXT_NODE)
-          .map((node) => node.textContent.trim())
-          .join("")
-          .trim();
+      h2Elements.forEach((h2) => {
+        let h2Text = h2.textContent
+          ?.replace(/[\u200B-\u200D\uFEFF]/g, '')
+          .replace(/\s+/g, ' ')
+          .trim() || '';
 
-        if (level === "h3" && text.includes("示例")) {
-          lastH3 = null;
-          return;
-        }
+        // 检查是否为英文函数名
+        if (/^[a-zA-Z0-9]+$/.test(h2Text)) {
+          const h2Id = h2.id;
+          const heading = {
+            text: h2Text,
+            href: `#${h2Id}`,
+            iconType: 'section',
+            children: [],
+            collapsed: false
+          };
 
-        if (level === "h2" && !this.isEnglishOnly(text)) {
-          lastH2 = null;
-          lastH3 = null;
-          return;
-        }
-
-        if (level === "h3" && !text.includes("参数") && !text.includes("返回值")) {
-          lastH3 = null;
-          return;
-        }
-
-        if (level === "h4") {
-          let currentIndex = index;
-          let currentH3 = null;
-          while (currentIndex >= 0) {
-            const currentTag = headingTags[currentIndex];
-            if (currentTag.tagName.toLowerCase() === "h3") {
-              const h3Text = Array.from(currentTag.childNodes)
-                .filter((node) => node.nodeType === Node.TEXT_NODE)
-                .map((node) => node.textContent.trim())
-                .join("")
-                .trim();
-              if (h3Text.includes("参数") || h3Text.includes("返回值")) {
-                currentH3 = currentTag;
-              }
+          // 获取H2后的第一个p标签作为description
+          let nextElement = h2.nextElementSibling;
+          while (nextElement && nextElement.tagName !== 'H2' && nextElement.tagName !== 'H3') {
+            if (nextElement.tagName === 'P') {
+              let description = nextElement.textContent
+                ?.replace(/[\u200B-\u200D\uFEFF]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim() || '';
+              
+              // 删除末尾的句号
+              description = description.replace(/。/, '');
+              heading.description = description;
               break;
             }
-            currentIndex--;
-          }
-          
-          if (!currentH3) {
-            return;
-          }
-        }
-
-        const item = {
-          text,
-          href: "#" + tag.id,
-          children: [],
-          collapsed: false,
-          iconType: this.getIconType(text, level),
-        };
-
-        if (level === "h2") {
-          let nextElement = tag.nextElementSibling;
-          if (nextElement && nextElement.tagName.toLowerCase() === "p") {
-            item.description = nextElement.textContent
-              .trim()
-              .replace(/[。.]$/, "");
+            nextElement = nextElement.nextElementSibling;
           }
 
-          lastH2 = item;
-          lastH3 = null;
-          result.push(item);
-        } else if (level === "h3") {
-          if (lastH2) {
-            lastH3 = item;
-            if (
-              text.includes("返回值") ||
-              text.includes("return") ||
-              text.includes("Return")
-            ) {
-              let currentElement = tag.nextElementSibling;
-              while (currentElement) {
-                if (currentElement.tagName.match(/^H[1-6]$/i)) {
-                  break;
-                }
-                if (currentElement.tagName.toLowerCase() === "ul") {
-                  const returnItems = [];
-                  const listItems = currentElement.querySelectorAll("li");
-                  listItems.forEach((li) => {
-                    const strongElement = li.querySelector("strong");
-                    if (strongElement) {
-                      returnItems.push({
-                        text: strongElement.textContent,
-                        href: "#" + tag.id,
+          // 继续获取H3子标题
+          while (nextElement && nextElement.tagName !== 'H2' && vpDoc.contains(nextElement)) {
+            if (nextElement.tagName === 'H3') {
+              const h3Text = nextElement.textContent
+                ?.replace(/[\u200B-\u200D\uFEFF]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim() || '';
+              
+              if (h3Text === '参数' || h3Text === '返回值') {
+                const h3Item = {
+                  text: h3Text,
+                  href: `#${nextElement.id}`,
+                  iconType: h3Text === '参数' ? 'params' : 'return',
+                  children: [],
+                  collapsed: false
+                };
+
+                // 获取内容
+                let h3Next = nextElement.nextElementSibling;
+                if (h3Text === '参数') {
+                  // 参数部分保持原有逻辑
+                  while (h3Next && h3Next.tagName !== 'H3' && h3Next.tagName !== 'H2') {
+                    if (h3Next.tagName === 'H4') {
+                      const h4Text = h3Next.textContent
+                        ?.replace(/[\u200B-\u200D\uFEFF]/g, '')
+                        .replace(/\s+/g, ' ')
+                        .trim() || '';
+                      
+                      h3Item.children.push({
+                        text: h4Text,
+                        href: `#${h3Next.id}`,
+                        children: []
                       });
                     }
-                  });
-                  if (returnItems.length > 0) {
-                    item.children = returnItems;
+                    h3Next = h3Next.nextElementSibling;
+                  }
+                } else {
+                  // 返回值部分新逻辑
+                  while (h3Next && !/^H[1-6]$/.test(h3Next.tagName)) {
+                    if (h3Next.tagName === 'UL') {
+                      const liElements = h3Next.querySelectorAll('li');
+                      liElements.forEach((li) => {
+                        const strongElement = li.querySelector('strong');
+                        if (strongElement) {
+                          const strongText = strongElement.textContent
+                            ?.replace(/[\u200B-\u200D\uFEFF]/g, '')
+                            .replace(/\s+/g, ' ')
+                            .trim() || '';
+                          
+                          h3Item.children.push({
+                            text: strongText,
+                            href: `#${nextElement.id}`,
+                            children: []
+                          });
+                        }
+                      });
+                    }
+                    h3Next = h3Next.nextElementSibling;
                   }
                 }
-                currentElement = currentElement.nextElementSibling;
+
+                heading.children.push(h3Item);
               }
             }
-            lastH2.children.push(item);
+            nextElement = nextElement.nextElementSibling;
           }
-        } else if (level === "h4") {
-          if (lastH3) {
-            if (!lastH3.children) {
-              lastH3.children = [];
-            }
-            if (lastH3.iconType === "params") {
-              const codeElement = tag.querySelector("code");
-              if (codeElement) {
-                item.text = codeElement.textContent;
-              }
-            }
-            lastH3.children.push(item);
-          }
+
+          this.headings.push(heading);
         }
       });
-
-      return result;
     },
 
-    getIconType(text, level) {
-      if (level === "h2") {
-        return "section";
-      }
+    generateId(text) {
+      // 生成简单的ID
+      return text.toLowerCase().replace(/\s+/g, '-');
+    },
 
-      if (level === "h3") {
-        if (
-          text.includes("参数") ||
-          text.includes("Props") ||
-          text.includes("props")
-        ) {
-          return "params";
-        } else if (
-          text.includes("返回值") ||
-          text.includes("return") ||
-          text.includes("Return")
-        ) {
-          return "return";
-        }
+    scrollToAnchor(href) {
+      const id = href.slice(1);
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
       }
-      return null;
     },
 
     toggleCollapse(item) {
@@ -246,14 +212,7 @@ export default {
 
     toggleH3Collapse(item) {
       item.collapsed = !item.collapsed;
-    },
-
-    scrollToAnchor(href) {
-      const el = document.querySelector(href);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth" });
-      }
-    },
+    }
   },
 };
 </script>

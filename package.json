@@ -1,6 +1,7 @@
 {
   "type": "module",
   "devDependencies": {
+    "@nolebase/vitepress-plugin-inline-link-preview": "^2.14.0",
     "vitepress": "^1.6.3",
     "vitepress-sidebar": "^1.31.0"
   },
