@@ -5,10 +5,16 @@ import { InlineLinkPreviewElementTransform } from "@nolebase/vitepress-plugin-in
 const vitePressOptions = {
   vite: {
     optimizeDeps: {
-      exclude: ["@nolebase/vitepress-plugin-inline-link-preview/client"],
+      exclude: [
+        "@nolebase/vitepress-plugin-inline-link-preview/client",
+        "@nolebase/ui",
+      ],
     },
     ssr: {
-      noExternal: ["@nolebase/vitepress-plugin-inline-link-preview"],
+      noExternal: [
+        "@nolebase/vitepress-plugin-inline-link-preview",
+        "@nolebase/ui",
+      ],
     },
   },
   base: "/JS-Slash-Runner-Doc/",
