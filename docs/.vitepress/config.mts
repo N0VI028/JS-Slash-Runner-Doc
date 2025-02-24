@@ -42,7 +42,7 @@ const vitePressOptions = {
     footer: {
       message: "作者：KAKAA, 青空莉想做舞台少女的狗",
       copyright:
-        '© Copyright 2025, N0VI028.<br>Icons by <a href="https://igoutu.cn/">Icons8</a>',
+        '© Copyright 2025, N0VI028.<br>Licensed under <a href="https://github.com/N0VI028/JS-Slash-Runner/blob/main/LICENSE">Aladdin</a>, Icons by <a href="https://igoutu.cn/">Icons8</a>',
     },
     lastUpdated: true,
     search: {
