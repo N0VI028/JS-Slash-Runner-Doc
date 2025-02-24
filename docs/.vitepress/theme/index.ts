@@ -8,10 +8,12 @@ import MyButton from "./components/MyButton.vue";
 import CustomTOC from "./components/CustomTOC.vue";
 import BackToTop from "./components/BackToTop.vue";
 import DocViews from "./components/DocViews.vue";
+import FeatureCarousel from "./components/FeatureCarousel.vue";
 import { h } from "vue";
 import useVisitData from "./useVisitData";
 import { NolebaseInlineLinkPreviewPlugin } from "@nolebase/vitepress-plugin-inline-link-preview/client";
 import "@nolebase/vitepress-plugin-inline-link-preview/client/style.css";
+
 
 export default {
   extends: DefaultTheme,
@@ -25,6 +27,7 @@ export default {
     app.component("MyButton", MyButton);
     app.component("CustomTOC", CustomTOC);
     app.component("DocViews", DocViews);
+    app.component("FeatureCarousel", FeatureCarousel);
     app.use(NolebaseInlineLinkPreviewPlugin);
     if (inBrowser) {
       router.onAfterPageLoad = (to: string) => {

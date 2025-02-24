@@ -29,7 +29,7 @@ const vitePressOptions = {
     },
     nav: [
       { text: "主页", link: "/" },
-      { text: "指南", link: "/关于前端助手/安装与更新.md" },
+      { text: "指南", link: "/关于前端助手/介绍.md" },
     ],
 
     socialLinks: [
