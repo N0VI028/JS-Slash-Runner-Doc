@@ -2342,6 +2342,8 @@ function Zoom(_ref) {
     mousePanStart.y = e.clientY;
     image.startX = newX;
     image.startY = newY;
+    image.currentX = newX;
+    image.currentY = newY;
   }
   function zoomIn(e) {
     const zoom = swiper.zoom;
@@ -2399,6 +2401,7 @@ function Zoom(_ref) {
       touchX = image.touchesStart.x;
       touchY = image.touchesStart.y;
     }
+    const prevScale = currentScale;
     const forceZoomRatio = typeof e === "number" ? e : null;
     if (currentScale === 1 && forceZoomRatio) {
       touchX = void 0;
@@ -2424,8 +2427,13 @@ function Zoom(_ref) {
       translateMinY = Math.min(slideHeight / 2 - scaledHeight / 2, 0);
       translateMaxX = -translateMinX;
       translateMaxY = -translateMinY;
-      translateX = diffX * zoom.scale;
-      translateY = diffY * zoom.scale;
+      if (prevScale > 0 && forceZoomRatio && typeof image.currentX === "number" && typeof image.currentY === "number") {
+        translateX = image.currentX * zoom.scale / prevScale;
+        translateY = image.currentY * zoom.scale / prevScale;
+      } else {
+        translateX = diffX * zoom.scale;
+        translateY = diffY * zoom.scale;
+      }
       if (translateX < translateMinX) {
         translateX = translateMinX;
       }
@@ -2446,6 +2454,8 @@ function Zoom(_ref) {
       gesture.originX = 0;
       gesture.originY = 0;
     }
+    image.currentX = translateX;
+    image.currentY = translateY;
     gesture.imageWrapEl.style.transitionDuration = "300ms";
     gesture.imageWrapEl.style.transform = `translate3d(${translateX}px, ${translateY}px,0)`;
     gesture.imageEl.style.transitionDuration = "300ms";
@@ -2478,6 +2488,8 @@ function Zoom(_ref) {
     }
     zoom.scale = 1;
     currentScale = 1;
+    image.currentX = void 0;
+    image.currentY = void 0;
     image.touchesStart.x = void 0;
     image.touchesStart.y = void 0;
     gesture.imageWrapEl.style.transitionDuration = "300ms";
@@ -3699,6 +3711,10 @@ function Thumb(_ref) {
     initialized = true;
     const SwiperClass = swiper.constructor;
     if (thumbsParams.swiper instanceof SwiperClass) {
+      if (thumbsParams.swiper.destroyed) {
+        initialized = false;
+        return false;
+      }
       swiper.thumbs.swiper = thumbsParams.swiper;
       Object.assign(swiper.thumbs.swiper.originalParams, {
         watchSlidesProgress: true,
@@ -5197,7 +5213,7 @@ function EffectCards(_ref) {
     overwriteParams: () => ({
       _loopSwapReset: false,
       watchSlidesProgress: true,
-      loopAdditionalSlides: 3,
+      loopAdditionalSlides: swiper.params.cardsEffect.rotate ? 3 : 2,
       centeredSlides: true,
       virtualTranslate: !swiper.params.cssMode
     })

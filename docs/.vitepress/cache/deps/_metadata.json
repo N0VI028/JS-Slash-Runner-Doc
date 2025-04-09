@@ -1,61 +1,61 @@
 {
-  "hash": "ee967622",
-  "configHash": "55817749",
-  "lockfileHash": "71a1ad33",
-  "browserHash": "10b523bb",
+  "hash": "ba879b74",
+  "configHash": "8e79bfbc",
+  "lockfileHash": "6f43333e",
+  "browserHash": "da02f7bb",
   "optimized": {
     "vue": {
       "src": "../../../../node_modules/vue/dist/vue.runtime.esm-bundler.js",
       "file": "vue.js",
-      "fileHash": "062b2a0c",
+      "fileHash": "fa5fa0b7",
       "needsInterop": false
     },
     "vitepress > @vue/devtools-api": {
       "src": "../../../../node_modules/@vue/devtools-api/dist/index.js",
       "file": "vitepress___@vue_devtools-api.js",
-      "fileHash": "399022c0",
+      "fileHash": "80afeb1f",
       "needsInterop": false
     },
     "vitepress > @vueuse/core": {
       "src": "../../../../node_modules/@vueuse/core/index.mjs",
       "file": "vitepress___@vueuse_core.js",
-      "fileHash": "e9be7087",
+      "fileHash": "b77338a8",
       "needsInterop": false
     },
     "vitepress > @vueuse/integrations/useFocusTrap": {
       "src": "../../../../node_modules/@vueuse/integrations/useFocusTrap.mjs",
       "file": "vitepress___@vueuse_integrations_useFocusTrap.js",
-      "fileHash": "9616121f",
+      "fileHash": "2ffd9966",
       "needsInterop": false
     },
     "vitepress > mark.js/src/vanilla.js": {
       "src": "../../../../node_modules/mark.js/src/vanilla.js",
       "file": "vitepress___mark__js_src_vanilla__js.js",
-      "fileHash": "5c57e385",
+      "fileHash": "107bf479",
       "needsInterop": false
     },
     "vitepress > minisearch": {
       "src": "../../../../node_modules/minisearch/dist/es/index.js",
       "file": "vitepress___minisearch.js",
-      "fileHash": "ed31b140",
+      "fileHash": "d23a0f87",
       "needsInterop": false
     },
     "swiper/vue": {
       "src": "../../../../node_modules/swiper/swiper-vue.mjs",
       "file": "swiper_vue.js",
-      "fileHash": "be635a62",
+      "fileHash": "4ac192a6",
       "needsInterop": false
     },
     "swiper/modules": {
       "src": "../../../../node_modules/swiper/modules/index.mjs",
       "file": "swiper_modules.js",
-      "fileHash": "95f3b510",
+      "fileHash": "49b20dd8",
       "needsInterop": false
     }
   },
   "chunks": {
-    "chunk-REMO2DH2": {
-      "file": "chunk-REMO2DH2.js"
+    "chunk-Z5QSWKN2": {
+      "file": "chunk-Z5QSWKN2.js"
     },
     "chunk-LW4I4DCF": {
       "file": "chunk-LW4I4DCF.js"
