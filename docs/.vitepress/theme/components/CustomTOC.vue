@@ -1,19 +1,28 @@
 <template>
   <nav class="custom-toc">
     <ul class="toc-list">
-      <li v-for="(item, i) in headings" :key="i" class="toc-item">
+      <li v-for="(item, i) in processedHeadings" :key="i" class="toc-item">
         <div class="toc-item-title h2" @click="toggleCollapse(item)">
           <div class="title-content">
-            <a
-              :href="item.href"
-              @click.stop.prevent="scrollToAnchor(item.href)"
-            >
+            <div class="title-with-badge">
+              <a
+                :href="item.href"
+                @click.stop.prevent="scrollToAnchor(item.href)"
+              >
+                <span
+                  v-if="item.iconType"
+                  :class="['icon', item.iconType]"
+                ></span>
+                {{ item.text }}
+              </a>
               <span
-                v-if="item.iconType"
-                :class="['icon', item.iconType]"
-              ></span>
-              {{ item.text }}
-            </a>
+                v-if="item.notExported"
+                class="not-exported-badge"
+                @click.stop.prevent="navigateToExportDocs"
+              >
+                🚫TavernHelper
+              </span>
+            </div>
             <button
               v-if="item.children.length"
               class="toggle-btn"
@@ -69,29 +78,47 @@
 </template>
 
 <script>
+import { nextTick, ref, computed, onMounted } from "vue";
+
 export default {
   name: "MyCustomTOC",
-  data() {
-    return {
-      headings: [],
+  setup() {
+    const rawHeadings = ref([]);
+    const notExportedComments = ref([]);
+
+    const processedHeadings = computed(() => {
+      // 处理未导出标记
+      return rawHeadings.value.map((heading) => {
+        const isNotExported = notExportedComments.value.some(
+          (comment) => comment.headingId === heading.href.slice(1)
+        );
+        return {
+          ...heading,
+          notExported: isNotExported,
+        };
+      });
+    });
+
+    // 清理文本内容的工具函数
+    const cleanText = (text) => {
+      return (
+        text
+          ?.replace(/[\u200B-\u200D\uFEFF]/g, "")
+          .replace(/\s+/g, " ")
+          .trim() || ""
+      );
     };
-  },
-  mounted() {
-    this.collectHeadings();
-  },
-  methods: {
-    collectHeadings() {
-      const vpDoc = document.querySelector('.VPDoc');
+
+    // 收集页面中的标题
+    const collectHeadings = () => {
+      const vpDoc = document.querySelector(".VPDoc");
       if (!vpDoc) return;
 
-      const h2Elements = vpDoc.querySelectorAll('h2');
-      this.headings = [];
+      const h2Elements = vpDoc.querySelectorAll("h2");
+      const headingsData = [];
 
       h2Elements.forEach((h2) => {
-        let h2Text = h2.textContent
-          ?.replace(/[\u200B-\u200D\uFEFF]/g, '')
-          .replace(/\s+/g, ' ')
-          .trim() || '';
+        const h2Text = cleanText(h2.textContent);
 
         // 检查是否为英文函数名
         if (/^[a-zA-Z0-9]+$/.test(h2Text)) {
@@ -99,120 +126,231 @@ export default {
           const heading = {
             text: h2Text,
             href: `#${h2Id}`,
-            iconType: 'section',
+            iconType: "section",
             children: [],
-            collapsed: false
+            collapsed: false,
           };
 
-          // 获取H2后的第一个p标签作为description
-          let nextElement = h2.nextElementSibling;
-          while (nextElement && nextElement.tagName !== 'H2' && nextElement.tagName !== 'H3') {
-            if (nextElement.tagName === 'P') {
-              let description = nextElement.textContent
-                ?.replace(/[\u200B-\u200D\uFEFF]/g, '')
-                .replace(/\s+/g, ' ')
-                .trim() || '';
-              
-              // 删除末尾的句号
-              description = description.replace(/。/, '');
+          // 查找描述 (第一个 p 标签)
+          let currentElement = h2.nextElementSibling;
+          let found = false;
+
+          while (
+            currentElement &&
+            !found &&
+            currentElement.tagName !== "H2" &&
+            currentElement.tagName !== "H3"
+          ) {
+            if (currentElement.tagName === "P") {
+              let description = cleanText(currentElement.textContent);
+              description = description.replace(/。/, "");
               heading.description = description;
-              break;
+              found = true;
             }
-            nextElement = nextElement.nextElementSibling;
+            currentElement = currentElement.nextElementSibling;
           }
 
-          // 继续获取H3子标题
-          while (nextElement && nextElement.tagName !== 'H2' && vpDoc.contains(nextElement)) {
-            if (nextElement.tagName === 'H3') {
-              const h3Text = nextElement.textContent
-                ?.replace(/[\u200B-\u200D\uFEFF]/g, '')
-                .replace(/\s+/g, ' ')
-                .trim() || '';
-              
-              if (h3Text === '参数' || h3Text === '返回值') {
-                const h3Item = {
-                  text: h3Text,
-                  href: `#${nextElement.id}`,
-                  iconType: h3Text === '参数' ? 'params' : 'return',
-                  children: [],
-                  collapsed: false
-                };
+          // 处理 H3 子标题
+          collectH3Headings(h2, heading, vpDoc);
 
-                // 获取内容
-                let h3Next = nextElement.nextElementSibling;
-                if (h3Text === '参数') {
-                  // 参数部分保持原有逻辑
-                  while (h3Next && h3Next.tagName !== 'H3' && h3Next.tagName !== 'H2') {
-                    if (h3Next.tagName === 'H4') {
-                      const h4Text = h3Next.textContent
-                        ?.replace(/[\u200B-\u200D\uFEFF]/g, '')
-                        .replace(/\s+/g, ' ')
-                        .trim() || '';
-                      
-                      h3Item.children.push({
-                        text: h4Text,
-                        href: `#${h3Next.id}`,
-                        children: []
-                      });
-                    }
-                    h3Next = h3Next.nextElementSibling;
-                  }
-                } else {
-                  // 返回值部分新逻辑
-                  while (h3Next && !/^H[1-6]$/.test(h3Next.tagName)) {
-                    if (h3Next.tagName === 'UL') {
-                      const liElements = h3Next.querySelectorAll('li');
-                      liElements.forEach((li) => {
-                        const strongElement = li.querySelector('strong');
-                        if (strongElement) {
-                          const strongText = strongElement.textContent
-                            ?.replace(/[\u200B-\u200D\uFEFF]/g, '')
-                            .replace(/\s+/g, ' ')
-                            .trim() || '';
-                          
-                          h3Item.children.push({
-                            text: strongText,
-                            href: `#${nextElement.id}`,
-                            children: []
-                          });
-                        }
-                      });
-                    }
-                    h3Next = h3Next.nextElementSibling;
-                  }
-                }
-
-                heading.children.push(h3Item);
-              }
-            }
-            nextElement = nextElement.nextElementSibling;
-          }
-
-          this.headings.push(heading);
+          headingsData.push(heading);
         }
       });
-    },
 
-    generateId(text) {
-      // 生成简单的ID
-      return text.toLowerCase().replace(/\s+/g, '-');
-    },
+      rawHeadings.value = headingsData;
+    };
 
-    scrollToAnchor(href) {
+    // 收集 H3 子标题
+    const collectH3Headings = (h2, heading, vpDoc) => {
+      let currentElement = h2.nextElementSibling;
+
+      while (
+        currentElement &&
+        currentElement.tagName !== "H2" &&
+        vpDoc.contains(currentElement)
+      ) {
+        if (currentElement.tagName === "H3") {
+          const h3Text = cleanText(currentElement.textContent);
+
+          if (h3Text === "参数" || h3Text === "返回值") {
+            const h3Item = {
+              text: h3Text,
+              href: `#${currentElement.id}`,
+              iconType: h3Text === "参数" ? "params" : "return",
+              children: [],
+              collapsed: false,
+            };
+
+            // 处理子内容
+            processH3Content(currentElement, h3Item, h3Text);
+
+            heading.children.push(h3Item);
+          }
+        }
+        currentElement = currentElement.nextElementSibling;
+      }
+    };
+
+    // 处理 H3 的内容 (参数或返回值)
+    const processH3Content = (h3Element, h3Item, h3Type) => {
+      let currentElement = h3Element.nextElementSibling;
+
+      if (h3Type === "参数") {
+        while (
+          currentElement &&
+          currentElement.tagName !== "H3" &&
+          currentElement.tagName !== "H2"
+        ) {
+          if (currentElement.tagName === "H4") {
+            const h4Text = cleanText(currentElement.textContent);
+            h3Item.children.push({
+              text: h4Text,
+              href: `#${currentElement.id}`,
+              children: [],
+            });
+          }
+          currentElement = currentElement.nextElementSibling;
+        }
+      } else {
+        // 返回值
+        while (currentElement && !/^H[1-6]$/.test(currentElement.tagName)) {
+          if (currentElement.tagName === "UL") {
+            const liElements = currentElement.querySelectorAll("li");
+            liElements.forEach((li) => {
+              const strongElement = li.querySelector("strong");
+              if (strongElement) {
+                const strongText = cleanText(strongElement.textContent);
+                h3Item.children.push({
+                  text: strongText,
+                  href: `#${h3Element.id}`,
+                  children: [],
+                });
+              }
+            });
+          }
+          currentElement = currentElement.nextElementSibling;
+        }
+      }
+    };
+
+    // 查找未导出的注释
+    const findNotExportedComments = () => {
+      const vpDoc = document.querySelector(".VPDoc");
+      if (!vpDoc) return;
+
+      // 查找文档中的注释节点
+      const found = [];
+      const treeWalker = document.createTreeWalker(
+        vpDoc,
+        NodeFilter.SHOW_COMMENT,
+        {
+          acceptNode: (node) => {
+            return node.textContent.trim() === "@not-exported"
+              ? NodeFilter.FILTER_ACCEPT
+              : NodeFilter.FILTER_SKIP;
+          },
+        }
+      );
+
+      // 收集所有符合条件的注释节点
+      while (treeWalker.nextNode()) {
+        const commentNode = treeWalker.currentNode;
+        let siblingNode = commentNode.nextSibling;
+
+        // 跳过空白文本节点
+        while (
+          siblingNode &&
+          siblingNode.nodeType === Node.TEXT_NODE &&
+          siblingNode.textContent.trim() === ""
+        ) {
+          siblingNode = siblingNode.nextSibling;
+        }
+
+        // 找到相关的 H2 元素
+        if (siblingNode && siblingNode.tagName === "H2") {
+          found.push({
+            headingId: siblingNode.id,
+            headingNode: siblingNode,
+          });
+        }
+      }
+
+      notExportedComments.value = found;
+    };
+
+    const addNotExportedBadgesToDOM = () => {
+      nextTick(() => {
+        notExportedComments.value.forEach((item) => {
+          const headingNode = item.headingNode;
+
+          if (!headingNode.querySelector(".not-exported-badge")) {
+            const badge = document.createElement("span");
+            badge.className = "not-exported-badge";
+            badge.textContent = "🚫TavernHelper";
+            badge.title = "此功能未导出到window中";
+
+            badge.addEventListener("click", (e) => {
+              e.stopPropagation();
+              navigateToExportDocs();
+            });
+
+            const textContainer = document.createElement("div");
+            textContainer.className = "title-with-badge";
+
+            while (headingNode.firstChild) {
+              textContainer.appendChild(headingNode.firstChild);
+            }
+
+            headingNode.appendChild(textContainer);
+            textContainer.appendChild(badge);
+          }
+        });
+      });
+    };
+
+    // 初始化
+    onMounted(() => {
+      collectHeadings();
+      findNotExportedComments();
+      addNotExportedBadgesToDOM();
+    });
+
+    // 导航到导出文档
+    const navigateToExportDocs = () => {
+      // 获取当前base URL
+      const baseUrl = import.meta.env.BASE_URL || "/";
+      // 拼接完整路径
+      const targetUrl = `${baseUrl}3.0.0/功能详情/接口访问#tavernhelper`;
+      // 移除多余的斜杠
+      const normalizedUrl = targetUrl.replace(/\/+/g, "/");
+      window.location.href = normalizedUrl;
+    };
+
+    // 平滑滚动到锚点
+    const scrollToAnchor = (href) => {
       const id = href.slice(1);
       const element = document.getElementById(id);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+        element.scrollIntoView({ behavior: "smooth" });
       }
-    },
+    };
 
-    toggleCollapse(item) {
+    // 切换折叠状态
+    const toggleCollapse = (item) => {
       item.collapsed = !item.collapsed;
-    },
+    };
 
-    toggleH3Collapse(item) {
+    const toggleH3Collapse = (item) => {
       item.collapsed = !item.collapsed;
-    }
+    };
+
+    return {
+      processedHeadings,
+      navigateToExportDocs,
+      scrollToAnchor,
+      toggleCollapse,
+      toggleH3Collapse,
+    };
   },
 };
 </script>
@@ -453,5 +591,27 @@ export default {
 
 .h3 > .h3-title > a > span.icon {
   flex-shrink: 0;
+}
+
+.title-with-badge {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+</style>
+
+<style>
+/* 全局样式，应用于动态添加的元素 */
+.not-exported-badge {
+  height: 1.8em !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  background-color: #e53935 !important;
+  color: white !important;
+  font-size: 0.6em !important;
+  padding: 2px 6px !important;
+  border-radius: 99px !important;
+  margin-left: 8px !important;
+  cursor: pointer !important;
 }
 </style>
