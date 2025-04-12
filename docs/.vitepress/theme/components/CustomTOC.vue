@@ -8,20 +8,19 @@
               <a
                 :href="item.href"
                 @click.stop.prevent="scrollToAnchor(item.href)"
+                style="display: flex; align-items: center"
               >
                 <span
                   v-if="item.iconType"
                   :class="['icon', item.iconType]"
                 ></span>
                 {{ item.text }}
+                <span
+                  v-if="item.hasTavernHelperBadge"
+                  class="not-exported-badge"
+                  >🚫TavernHelper</span
+                >
               </a>
-              <span
-                v-if="item.notExported"
-                class="not-exported-badge"
-                @click.stop.prevent="navigateToExportDocs"
-              >
-                🚫TavernHelper
-              </span>
             </div>
             <button
               v-if="item.children.length"
@@ -84,20 +83,8 @@ export default {
   name: "MyCustomTOC",
   setup() {
     const rawHeadings = ref([]);
-    const notExportedComments = ref([]);
 
-    const processedHeadings = computed(() => {
-      // 处理未导出标记
-      return rawHeadings.value.map((heading) => {
-        const isNotExported = notExportedComments.value.some(
-          (comment) => comment.headingId === heading.href.slice(1)
-        );
-        return {
-          ...heading,
-          notExported: isNotExported,
-        };
-      });
-    });
+    const processedHeadings = computed(() => rawHeadings.value);
 
     // 清理文本内容的工具函数
     const cleanText = (text) => {
@@ -111,53 +98,82 @@ export default {
 
     // 收集页面中的标题
     const collectHeadings = () => {
+      console.log("collectHeadings: 开始收集标题");
       const vpDoc = document.querySelector(".VPDoc");
-      if (!vpDoc) return;
+      if (!vpDoc) {
+        console.warn("collectHeadings: 未找到 .VPDoc 元素");
+        return;
+      }
 
       const h2Elements = vpDoc.querySelectorAll("h2");
+      console.log("collectHeadings: 找到 h2 标题数量:", h2Elements.length);
       const headingsData = [];
 
       h2Elements.forEach((h2) => {
-        const h2Text = cleanText(h2.textContent);
-
-        // 检查是否为英文函数名
-        if (/^[a-zA-Z0-9]+$/.test(h2Text)) {
-          const h2Id = h2.id;
-          const heading = {
-            text: h2Text,
-            href: `#${h2Id}`,
-            iconType: "section",
-            children: [],
-            collapsed: false,
-          };
-
-          // 查找描述 (第一个 p 标签)
-          let currentElement = h2.nextElementSibling;
-          let found = false;
-
-          while (
-            currentElement &&
-            !found &&
-            currentElement.tagName !== "H2" &&
-            currentElement.tagName !== "H3"
-          ) {
-            if (currentElement.tagName === "P") {
-              let description = cleanText(currentElement.textContent);
-              description = description.replace(/。/, "");
-              heading.description = description;
-              found = true;
-            }
-            currentElement = currentElement.nextElementSibling;
-          }
-
-          // 处理 H3 子标题
-          collectH3Headings(h2, heading, vpDoc);
-
-          headingsData.push(heading);
+        // Clone h2 to extract text without the badge
+        const clonedH2 = h2.cloneNode(true);
+        const badgeElement = clonedH2.querySelector("span.Badge.warning"); // Corrected selector
+        if (badgeElement) {
+          badgeElement.remove();
         }
+
+        // 检查是否包含"🚫TavernHelper"徽标文本
+        let hasTavernHelperBadge = false;
+        let headingText = cleanText(clonedH2.textContent); // Use cloned node for text
+
+        if (headingText.includes("🚫TavernHelper")) {
+          console.log("collectHeadings: 包含🚫TavernHelper徽标文本");
+          hasTavernHelperBadge = true;
+          headingText = headingText.replace("🚫TavernHelper", "").trim();
+
+          // 移除为原始H2添加徽标元素的代码，保持原始内容不变
+        }
+
+        console.log("collectHeadings: 处理标题:", headingText);
+
+        // No longer filter based on text format, process all H2
+        const h2Id = h2.id;
+        const heading = {
+          text: headingText, // Use cleaned text
+          href: `#${h2Id}`,
+          iconType: "section",
+          children: [],
+          collapsed: false,
+          hasTavernHelperBadge, // 添加标记属性
+        };
+
+        // 查找描述 (第一个 p 标签) - Logic remains the same
+        let currentElement = h2.nextElementSibling;
+        let found = false;
+
+        while (
+          currentElement &&
+          !found &&
+          currentElement.tagName !== "H2" &&
+          currentElement.tagName !== "H3"
+        ) {
+          if (currentElement.tagName === "P") {
+            let description = cleanText(currentElement.textContent);
+            description = description.replace(/。/, "");
+            heading.description = description;
+            found = true;
+          }
+          currentElement = currentElement.nextElementSibling;
+        }
+
+        // 处理 H3 子标题 - Logic remains the same
+        collectH3Headings(h2, heading, vpDoc);
+
+        headingsData.push(heading);
+        console.log("collectHeadings: 添加标题到数据:", headingText);
       });
 
       rawHeadings.value = headingsData;
+      console.log(
+        "collectHeadings: 标题收集完成，共",
+        headingsData.length,
+        "个"
+      );
     };
 
     // 收集 H3 子标题
@@ -233,99 +249,6 @@ export default {
       }
     };
 
-    // 查找未导出的注释
-    const findNotExportedComments = () => {
-      const vpDoc = document.querySelector(".VPDoc");
-      if (!vpDoc) return;
-
-      // 查找文档中的注释节点
-      const found = [];
-      const treeWalker = document.createTreeWalker(
-        vpDoc,
-        NodeFilter.SHOW_COMMENT,
-        {
-          acceptNode: (node) => {
-            return node.textContent.trim() === "@not-exported"
-              ? NodeFilter.FILTER_ACCEPT
-              : NodeFilter.FILTER_SKIP;
-          },
-        }
-      );
-
-      // 收集所有符合条件的注释节点
-      while (treeWalker.nextNode()) {
-        const commentNode = treeWalker.currentNode;
-        let siblingNode = commentNode.nextSibling;
-
-        // 跳过空白文本节点
-        while (
-          siblingNode &&
-          siblingNode.nodeType === Node.TEXT_NODE &&
-          siblingNode.textContent.trim() === ""
-        ) {
-          siblingNode = siblingNode.nextSibling;
-        }
-
-        // 找到相关的 H2 元素
-        if (siblingNode && siblingNode.tagName === "H2") {
-          found.push({
-            headingId: siblingNode.id,
-            headingNode: siblingNode,
-          });
-        }
-      }
-
-      notExportedComments.value = found;
-    };
-
-    const addNotExportedBadgesToDOM = () => {
-      nextTick(() => {
-        notExportedComments.value.forEach((item) => {
-          const headingNode = item.headingNode;
-
-          if (!headingNode.querySelector(".not-exported-badge")) {
-            const badge = document.createElement("span");
-            badge.className = "not-exported-badge";
-            badge.textContent = "🚫TavernHelper";
-            badge.title = "此功能未导出到window中";
-
-            badge.addEventListener("click", (e) => {
-              e.stopPropagation();
-              navigateToExportDocs();
-            });
-
-            const textContainer = document.createElement("div");
-            textContainer.className = "title-with-badge";
-
-            while (headingNode.firstChild) {
-              textContainer.appendChild(headingNode.firstChild);
-            }
-
-            headingNode.appendChild(textContainer);
-            textContainer.appendChild(badge);
-          }
-        });
-      });
-    };
-
-    // 初始化
-    onMounted(() => {
-      collectHeadings();
-      findNotExportedComments();
-      addNotExportedBadgesToDOM();
-    });
-
-    // 导航到导出文档
-    const navigateToExportDocs = () => {
-      // 获取当前base URL
-      const baseUrl = import.meta.env.BASE_URL || "/";
-      // 拼接完整路径
-      const targetUrl = `${baseUrl}3.0.0/功能详情/接口访问#tavernhelper`;
-      // 移除多余的斜杠
-      const normalizedUrl = targetUrl.replace(/\/+/g, "/");
-      window.location.href = normalizedUrl;
-    };
-
     // 平滑滚动到锚点
     const scrollToAnchor = (href) => {
       const id = href.slice(1);
@@ -344,9 +267,15 @@ export default {
       item.collapsed = !item.collapsed;
     };
 
+    // 初始化
+    onMounted(() => {
+      collectHeadings();
+
+      console.log("CustomTOC: 初始化完成"); // Simplified log
+    });
+
     return {
       processedHeadings,
-      navigateToExportDocs,
       scrollToAnchor,
       toggleCollapse,
       toggleH3Collapse,
@@ -598,18 +527,17 @@ export default {
   align-items: center;
   flex-wrap: wrap;
 }
-</style>
 
-<style>
 /* 全局样式，应用于动态添加的元素 */
 .not-exported-badge {
   height: 1.8em !important;
   display: inline-flex !important;
   align-items: center !important;
-  background-color: #e53935 !important;
-  color: white !important;
+  background-color: var(--vp-badge-warning-bg) !important;
+  color: var(--vp-badge-warning-text) !important;
   font-size: 0.6em !important;
-  padding: 2px 6px !important;
+  font-weight: 500 !important;
+  padding: 2px 8px 2px 6px !important;
   border-radius: 99px !important;
   margin-left: 8px !important;
   cursor: pointer !important;
