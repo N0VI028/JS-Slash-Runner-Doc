@@ -86,7 +86,7 @@ export default {
 
     const processedHeadings = computed(() => rawHeadings.value);
 
-    // 清理文本内容的工具函数
+    
     const cleanText = (text) => {
       return (
         text
@@ -96,53 +96,57 @@ export default {
       );
     };
 
-    // 收集页面中的标题
+    
+    const containsChinese = (text) => {
+      return /[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF]/.test(text);
+    };
+
+    
     const collectHeadings = () => {
-      console.log("collectHeadings: 开始收集标题");
       const vpDoc = document.querySelector(".VPDoc");
       if (!vpDoc) {
-        console.warn("collectHeadings: 未找到 .VPDoc 元素");
         return;
       }
 
       const h2Elements = vpDoc.querySelectorAll("h2");
-      console.log("collectHeadings: 找到 h2 标题数量:", h2Elements.length);
+
       const headingsData = [];
 
       h2Elements.forEach((h2) => {
-        // Clone h2 to extract text without the badge
+        
         const clonedH2 = h2.cloneNode(true);
-        const badgeElement = clonedH2.querySelector("span.Badge.warning"); // Corrected selector
+        const badgeElement = clonedH2.querySelector("span.Badge.warning"); 
         if (badgeElement) {
           badgeElement.remove();
         }
 
-        // 检查是否包含"🚫TavernHelper"徽标文本
+        
         let hasTavernHelperBadge = false;
-        let headingText = cleanText(clonedH2.textContent); // Use cloned node for text
+        let headingText = cleanText(clonedH2.textContent); 
 
         if (headingText.includes("🚫TavernHelper")) {
-          console.log("collectHeadings: 包含🚫TavernHelper徽标文本");
           hasTavernHelperBadge = true;
           headingText = headingText.replace("🚫TavernHelper", "").trim();
 
-          // 移除为原始H2添加徽标元素的代码，保持原始内容不变
+          
         }
 
-        console.log("collectHeadings: 处理标题:", headingText);
+        
+        if (containsChinese(headingText)) {
+          return; 
+        }
 
-        // No longer filter based on text format, process all H2
         const h2Id = h2.id;
         const heading = {
-          text: headingText, // Use cleaned text
+          text: headingText, 
           href: `#${h2Id}`,
           iconType: "section",
           children: [],
           collapsed: false,
-          hasTavernHelperBadge, // 添加标记属性
+          hasTavernHelperBadge, 
         };
 
-        // 查找描述 (第一个 p 标签) - Logic remains the same
+        
         let currentElement = h2.nextElementSibling;
         let found = false;
 
@@ -161,22 +165,16 @@ export default {
           currentElement = currentElement.nextElementSibling;
         }
 
-        // 处理 H3 子标题 - Logic remains the same
+        
         collectH3Headings(h2, heading, vpDoc);
 
         headingsData.push(heading);
-        console.log("collectHeadings: 添加标题到数据:", headingText);
       });
 
       rawHeadings.value = headingsData;
-      console.log(
-        "collectHeadings: 标题收集完成，共",
-        headingsData.length,
-        "个"
-      );
     };
 
-    // 收集 H3 子标题
+    
     const collectH3Headings = (h2, heading, vpDoc) => {
       let currentElement = h2.nextElementSibling;
 
@@ -197,7 +195,7 @@ export default {
               collapsed: false,
             };
 
-            // 处理子内容
+            
             processH3Content(currentElement, h3Item, h3Text);
 
             heading.children.push(h3Item);
@@ -207,7 +205,7 @@ export default {
       }
     };
 
-    // 处理 H3 的内容 (参数或返回值)
+    
     const processH3Content = (h3Element, h3Item, h3Type) => {
       let currentElement = h3Element.nextElementSibling;
 
@@ -228,7 +226,7 @@ export default {
           currentElement = currentElement.nextElementSibling;
         }
       } else {
-        // 返回值
+        
         while (currentElement && !/^H[1-6]$/.test(currentElement.tagName)) {
           if (currentElement.tagName === "UL") {
             const liElements = currentElement.querySelectorAll("li");
@@ -249,7 +247,7 @@ export default {
       }
     };
 
-    // 平滑滚动到锚点
+    
     const scrollToAnchor = (href) => {
       const id = href.slice(1);
       const element = document.getElementById(id);
@@ -258,7 +256,7 @@ export default {
       }
     };
 
-    // 切换折叠状态
+    
     const toggleCollapse = (item) => {
       item.collapsed = !item.collapsed;
     };
@@ -267,11 +265,9 @@ export default {
       item.collapsed = !item.collapsed;
     };
 
-    // 初始化
+    
     onMounted(() => {
       collectHeadings();
-
-      console.log("CustomTOC: 初始化完成"); // Simplified log
     });
 
     return {

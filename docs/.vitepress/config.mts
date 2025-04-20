@@ -18,7 +18,7 @@ const vitePressOptions = {
     },
   },
   base: "/JS-Slash-Runner-Doc/",
-  title: "前端助手",
+  title: "酒馆助手",
   description: "在SillyTavern中渲染前端界面",
   head: [["link", { rel: "icon", href: "logo.ico" }]] as HeadConfig[],
   themeConfig: {
@@ -29,8 +29,7 @@ const vitePressOptions = {
     },
     nav: [
       { text: "主页", link: "/" },
-      { text: "指南", link: "/guide/关于前端助手/介绍.md" },
-      { text: "3.0.0", link: "/3.0.0/关于酒馆助手/介绍.md" },
+      { text: "指南", link: "/guide/关于酒馆助手/介绍.md" },
     ],
 
     socialLinks: [
@@ -78,24 +77,12 @@ const vitePressSidebarOptions = [
     collapseDepth: 2,
     sortMenusByFrontmatterOrder: true,
     manualSortFileNameByPriority: [
-      "关于前端助手",
-      "基本用法",
-      "功能详情",
-      "应用示例",
-    ],
-  },
-  {
-    documentRootPath: "/docs",
-    scanStartPath: "3.0.0",
-    basePath: "/3.0.0/",
-    resolvePath: "/3.0.0/",
-    collapsed: true,
-    collapseDepth: 2,
-    sortMenusByFrontmatterOrder: true,
-    manualSortFileNameByPriority: [
       "关于酒馆助手",
       "基本用法",
       "功能详情",
+      "世界书",
+      "变量操作",
+      "其他辅助功能",
       "应用示例",
     ],
   },
