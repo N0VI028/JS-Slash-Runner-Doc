@@ -36,7 +36,7 @@ const vitePressOptions = {
       { icon: "github", link: "https://github.com/N0VI028/JS-Slash-Runner" },
       {
         icon: "discord",
-        link: "https://discord.com/channels/1134557553011998840/1296494001406345318",
+        link: "https://discord.com/channels/1291925535324110879/1363482767421341868",
       },
     ],
     footer: {
