@@ -10,7 +10,7 @@
 - 在 VSCode 右下角点击 "Go Live" 来将文件夹映射到链接上，然后 "Go Live" 将会变成一串数字
 - 打开下方下载的角色卡正则中的 "脚本-实时修改CSS"，将其中 "填入你的css链接" 改为 `http://localhost:那一串数字/你复制得到的相对路径`
 
-<MyButton url="https://gitgud.io/SmilingFace/tavern_resource/-/raw/main/前端助手/实时修改css/角色卡.png?inline=false">📥 下载直接可用的模板</MyButton>
+<MyButton url="https://gitgud.io/SmilingFace/tavern_resource/-/raw/main/酒馆助手/实时修改css/角色卡.png?inline=false">📥 下载直接可用的模板</MyButton>
 
 ::: tip
 如果觉得 VSCode 修改后的反馈还是比较慢，可以把 `脚本-实时修改CSS` 中最下面一行的 `1000` 调小
