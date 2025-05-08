@@ -1,55 +1,55 @@
 {
-  "hash": "0fcff988",
-  "configHash": "716bf4b0",
-  "lockfileHash": "f255ee0a",
-  "browserHash": "e218d866",
+  "hash": "ba879b74",
+  "configHash": "8e79bfbc",
+  "lockfileHash": "6f43333e",
+  "browserHash": "da02f7bb",
   "optimized": {
     "vue": {
       "src": "../../../../node_modules/vue/dist/vue.runtime.esm-bundler.js",
       "file": "vue.js",
-      "fileHash": "3e91f29b",
+      "fileHash": "d73dbd46",
       "needsInterop": false
     },
     "vitepress > @vue/devtools-api": {
       "src": "../../../../node_modules/@vue/devtools-api/dist/index.js",
       "file": "vitepress___@vue_devtools-api.js",
-      "fileHash": "3f923d51",
+      "fileHash": "80afeb1f",
       "needsInterop": false
     },
     "vitepress > @vueuse/core": {
       "src": "../../../../node_modules/@vueuse/core/index.mjs",
       "file": "vitepress___@vueuse_core.js",
-      "fileHash": "7a10998c",
+      "fileHash": "cf6b29ce",
       "needsInterop": false
     },
     "vitepress > @vueuse/integrations/useFocusTrap": {
       "src": "../../../../node_modules/@vueuse/integrations/useFocusTrap.mjs",
       "file": "vitepress___@vueuse_integrations_useFocusTrap.js",
-      "fileHash": "c3bd2704",
+      "fileHash": "a46d190f",
       "needsInterop": false
     },
     "vitepress > mark.js/src/vanilla.js": {
       "src": "../../../../node_modules/mark.js/src/vanilla.js",
       "file": "vitepress___mark__js_src_vanilla__js.js",
-      "fileHash": "f69bd487",
+      "fileHash": "107bf479",
       "needsInterop": false
     },
     "vitepress > minisearch": {
       "src": "../../../../node_modules/minisearch/dist/es/index.js",
       "file": "vitepress___minisearch.js",
-      "fileHash": "e425979e",
+      "fileHash": "d23a0f87",
       "needsInterop": false
     },
     "swiper/vue": {
       "src": "../../../../node_modules/swiper/swiper-vue.mjs",
       "file": "swiper_vue.js",
-      "fileHash": "016f301b",
+      "fileHash": "a5a9e49e",
       "needsInterop": false
     },
     "swiper/modules": {
       "src": "../../../../node_modules/swiper/modules/index.mjs",
       "file": "swiper_modules.js",
-      "fileHash": "ac31c0c6",
+      "fileHash": "6eb6efe9",
       "needsInterop": false
     }
   },

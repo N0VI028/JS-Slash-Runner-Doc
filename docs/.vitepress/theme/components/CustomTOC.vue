@@ -324,7 +324,7 @@ export default {
 
 .title-description {
   font-size: 0.8em;
-  color: var(--vp-c-text-3);
+  color: var(--vp-c-text-2);
   margin: 0 24px 4px 24px;
   line-height: 1.4;
   cursor: text;
