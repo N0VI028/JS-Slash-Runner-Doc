@@ -1,16 +1,18 @@
 {
   "type": "module",
-  "devDependencies": {
-    "@nolebase/vitepress-plugin-inline-link-preview": "^2.14.0",
-    "vitepress": "^1.6.3",
-    "vitepress-sidebar": "^1.31.0"
-  },
   "scripts": {
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "dev": "vitepress",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vue-tsc": "^3.1.1"
   },
   "dependencies": {
-    "swiper": "^11.2.4"
+    "@nolebase/vitepress-plugin-inline-link-preview": "^2.14.0",
+    "swiper": "^11.2.4",
+    "vitepress": "^1.6.3",
+    "vitepress-sidebar": "^1.31.0"
   }
 }

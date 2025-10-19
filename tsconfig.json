@@ -1,36 +1,31 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "dist",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "target": "ESNext",
-    "rootDir": ".",
-    "jsx": "preserve",
     "declaration": true,
     "composite": true,
     "incremental": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "types": [
-      "vite/client"
-    ],
     "allowJs": true,
     "strict": true,
     "strictNullChecks": true,
     "noUnusedLocals": true,
     "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "paths": {
+      "@theme/*": [
+        ".vitepress/theme/*"
+      ]
+    }
   },
   "include": [
-    "**/*.ts",
-    "**/*.d.ts",
-    "**/*.tsx",
-    "**/*.vue",
-    "./docs/.vitepress/**/*.ts",
-    "./docs/.vitepress/**/*.tsx",
-    "./docs/.vitepress/**/*.vue"
-  ],
-  "exclude": [
-    "node_modules"
+    "env.d.ts",
+    "src/**/*",
+    ".vitepress/**/*"
   ]
 }
