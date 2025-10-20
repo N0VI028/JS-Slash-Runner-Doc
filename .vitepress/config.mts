@@ -77,10 +77,14 @@ const vitePressSidebarOptions: VitePressSidebarOptions[] = [
       '基本用法',
       '功能详情',
 
+      // TODO: 神秘 vitepress 带子网页的必定被排在在前面, 我服了
       '变量',
       '世界书',
       '楼层消息',
       '预设',
+      '播放音频',
+
+      // TODO: 因为神秘 vitepress 只能在 .md 里用 order 排序?
       '酒馆正则',
       '监听和发送事件',
       '触发快速回复命令',
@@ -88,7 +92,6 @@ const vitePressSidebarOptions: VitePressSidebarOptions[] = [
       '请求生成',
       '脚本额外功能',
       '酒馆助手宏',
-      '播放音频',
       '内置第三方库',
       '安装酒馆扩展',
       '导入酒馆数据',
