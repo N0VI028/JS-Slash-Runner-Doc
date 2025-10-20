@@ -25,10 +25,6 @@ const vitePressOptions: UserConfig = {
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/N0VI028/JS-Slash-Runner' },
-      {
-        icon: 'discord',
-        link: 'https://discord.com/channels/1291925535324110879/1363482767421341868',
-      },
     ],
     logo: '/logo.ico',
     footer: {
@@ -87,6 +83,7 @@ const vitePressSidebarOptions: VitePressSidebarOptions[] = [
       '变量操作',
       '楼层消息',
       '预设操作',
+      // TODO: 调整顺序
       '其他辅助功能',
       '应用示例',
     ],
