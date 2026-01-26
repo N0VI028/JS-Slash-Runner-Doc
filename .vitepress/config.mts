@@ -88,7 +88,7 @@ const vitePressSidebarOptions: VitePressSidebarOptions[] = [
       // TODO: 因为神秘 vitepress 只能在 .md 里用 order 排序?
       '请求生成',
       '监听和发送事件',
-      '导入酒馆数据',
+      '导入或更新酒馆数据',
       '注入提示词',
       '触发快速回复命令',
       '脚本额外功能',
@@ -98,7 +98,7 @@ const vitePressSidebarOptions: VitePressSidebarOptions[] = [
       '查询版本',
       '分享接口',
       '其他工具函数',
-      '访问其他插件',
+      '访问酒馆接口或其他插件',
       '内置第三方库',
     ],
   },
