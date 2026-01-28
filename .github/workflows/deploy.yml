@@ -1,16 +1,13 @@
 name: Deploy Pages
 
-# 触发条件，push到main分支或者pull request到main分支
 on:
+  schedule:
+    - cron: 0 0 */3 * *
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
-  # 支持手动在工作流上触发
+    branches:
+      - main
   workflow_dispatch:
 
-# 设置时区
 env:
   TZ: Asia/Shanghai
 
