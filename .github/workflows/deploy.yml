@@ -59,6 +59,20 @@ jobs:
       - name: Install dependencies
         run: npm install --frozen-lockfile
 
+        # 更新日志
+      - name: Download changelog
+        run: |-
+          rm -f 更新日志.md
+          wget https://raw.githubusercontent.com/N0VI028/JS-Slash-Runner/refs/heads/main/CHANGELOG.md -O 更新日志.md
+          sed -i '1i\
+          ---\
+          order: 3\
+          ---\
+          \
+          # 更新日志\
+          ' CHANGELOG.md
+        working-directory: src/guide/关于酒馆助手
+
         # 构建项目
       - name: Build blog project
         run: |
