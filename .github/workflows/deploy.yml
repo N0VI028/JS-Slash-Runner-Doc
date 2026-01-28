@@ -71,7 +71,7 @@ jobs:
           \
           # 更新日志\
           ' 更新日志.md
-          sed -i -E 's/\{\{([^}]*)\}\}/<code v-pre>{{\1}}<\/code>/g' 更新日志.md
+          sed -i -E 's/`\{\{([^}]*)\}\}`/<code v-pre>{{\1}}<\/code>/g' 更新日志.md
         working-directory: src/guide/关于酒馆助手
 
         # 构建项目
