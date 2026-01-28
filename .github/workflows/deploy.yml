@@ -70,7 +70,7 @@ jobs:
           ---\
           \
           # 更新日志\
-          ' CHANGELOG.md
+          ' 更新日志.md
         working-directory: src/guide/关于酒馆助手
 
         # 构建项目
