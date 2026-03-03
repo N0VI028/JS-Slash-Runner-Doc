@@ -84,6 +84,7 @@ const vitePressSidebarOptions: VitePressSidebarOptions[] = [
       '角色卡',
       '预设',
       '播放音频',
+      '酒馆正则',
 
       // TODO: 因为神秘 vitepress 只能在 .md 里用 order 排序?
       '请求生成',
@@ -91,8 +92,7 @@ const vitePressSidebarOptions: VitePressSidebarOptions[] = [
       '导入或更新酒馆数据',
       '注入提示词',
       '触发快速回复命令',
-      '脚本额外功能',
-      '酒馆正则',
+      '酒馆助手脚本',
       '酒馆助手宏',
       '安装酒馆扩展',
       '查询版本',
