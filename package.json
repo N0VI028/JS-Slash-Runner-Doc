@@ -13,6 +13,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.1.0",
     "@nolebase/vitepress-plugin-inline-link-preview": "^2.14.0",
+    "axios": "1.14.0",
     "swiper": "^11.2.4",
     "vitepress": "^1.6.3",
     "vitepress-sidebar": "^1.31.0"
