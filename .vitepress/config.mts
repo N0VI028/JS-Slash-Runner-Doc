@@ -82,6 +82,7 @@ const vitePressSidebarOptions: VitePressSidebarOptions[] = [
       '世界书',
       '楼层消息',
       '角色卡',
+      '用户人设',
       '预设',
       '播放音频',
       '酒馆正则',
