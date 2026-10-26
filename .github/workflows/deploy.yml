@@ -45,6 +45,12 @@ jobs:
           # 保留 Git 信息
           fetch-depth: 0
 
+      # 安装 pnpm（仓库使用 pnpm-lock.yaml）
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       # 设置使用 Node.js 版本
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -54,7 +60,7 @@ jobs:
 
         # 安装依赖
       - name: Install dependencies
-        run: npm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
         # 更新日志
       - name: Download changelog
@@ -75,7 +81,7 @@ jobs:
       - name: Build blog project
         run: |
           echo ${{ github.workspace }}
-          npm run build
+          pnpm run build
 
         # 资源拷贝
       - name: Build with Jekyll
